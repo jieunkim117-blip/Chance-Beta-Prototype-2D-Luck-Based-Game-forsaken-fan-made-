@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chance - Beta Prototype</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Audio -->
+    <audio id="bgm-player" src="music/(Forsaken Ost) 공식 핵로드 LMS - 다이스 (128k).mp3" loop></audio>
+    <audio id="sfx-gun-loading" src="music/music_effect/gun-loading-sound.mp3"></audio>
+    <audio id="sfx-gun-shot" src="music/music_effect/single-short-shot.mp3"></audio>
+
+    <!-- Game World -->
+    <div id="game-container">
+        <!-- Visual Text Feedback Layer -->
+        <div id="feedback-layer"></div>
+
+        <!-- Player Entity -->
+        <div id="player">
+            <div class="player-shadow"></div>
+            <div class="player-body"></div>
+        </div>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-container">
+        <div class="ui-panel top-panel">
+            <div class="stat-row">
+                <div class="stat-label">HP</div>
+                <div class="health-bar-container">
+                    <div id="health-bar-fill"></div>
+                    <div id="health-text" style="z-index: 10;">90/90</div>
+                </div>
+            </div>
+
+            <div class="stacks-container">
+                <div class="stack-box charge">
+                    <span class="stack-icon">⚡</span>
+                    <span class="stack-label">Charge</span>
+                    <span id="charge-count" class="stack-value">0/3</span>
+                </div>
+                <div class="stack-box weakness">
+                    <span class="stack-icon">💀</span>
+                    <span class="stack-label">Weakness</span>
+                    <span id="weakness-count" class="stack-value">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui-panel bottom-panel">
+            <div class="ability-row">
+                <div class="ability-slot" id="ability-q">
+                    <div class="ability-name">Coin Flip</div>
+                    <img src="image/coin_flip.png" class="ability-icon" alt="" onerror="this.style.display='none';">
+                    <div class="ability-key">Q</div>
+                    <div class="ability-cd-overlay"></div>
+                </div>
+                <div class="ability-slot" id="ability-e">
+                    <div class="ability-name">One Shot</div>
+                    <img src="image/gun.png" class="ability-icon" alt="" onerror="this.style.display='none';">
+                    <div class="ability-key">E</div>
+                    <div class="ability-cd-overlay"></div>
+                </div>
+                <div class="ability-slot" id="ability-r">
+                    <div class="ability-name">Reroll HP</div>
+                    <img src="image/reroll.png" class="ability-icon" alt="" onerror="this.style.display='none';">
+                    <div class="ability-key">R</div>
+                    <div class="ability-cd-overlay"></div>
+                </div>
+                <div class="ability-slot" id="ability-t">
+                    <div class="ability-name">Reset</div>
+                    <img src="image/hat_fix.png" class="ability-icon" alt="" onerror="this.style.display='none';">
+                    <div class="ability-key">T</div>
+                    <div class="ability-cd-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
