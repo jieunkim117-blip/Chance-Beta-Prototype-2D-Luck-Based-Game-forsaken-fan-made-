@@ -1,0 +1,437 @@
+:root {
+    --bg-dark: #0f172a;
+    --arena-bg: #1e293b;
+    --primary: #3b82f6;
+    --charge: #fbbf24;
+    --weakness: #ef4444;
+    --health: #10b981;
+    --ui-glass: rgba(15, 23, 42, 0.8);
+    --text-main: #f8fafc;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Game Environment */
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--arena-bg);
+    position: relative;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+/* Player */
+#player {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.player-shadow {
+    width: 100%;
+    height: 30%;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    filter: blur(2px);
+}
+
+.player-body {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    transition: filter 0.1s;
+}
+
+@keyframes flashSuccess {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(2) drop-shadow(0 0 15px #34d399); }
+    100% { filter: brightness(1); }
+}
+
+.flash-success .player-body {
+    animation: flashSuccess 0.4s ease-out;
+}
+
+@keyframes flashFail {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.5) drop-shadow(0 0 15px #ef4444); }
+    100% { filter: brightness(1); }
+}
+
+.flash-fail .player-body {
+    animation: flashFail 0.4s ease-out;
+}
+
+/* UI Structure */
+#ui-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ui-panel {
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    pointer-events: auto; /* Fix clicks not registering */
+}
+
+/* Top Panel - Stats */
+.stat-row {
+    background: var(--ui-glass);
+    padding: 12px 24px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.stat-label {
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.health-bar-container {
+    width: 250px;
+    height: 24px;
+    background: #334155;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #0f172a;
+}
+
+#health-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #059669, #10b981);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#health-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.stacks-container {
+    display: flex;
+    gap: 16px;
+}
+
+.stack-box {
+    background: var(--ui-glass);
+    padding: 10px 20px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.stack-value {
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.charge .stack-value { color: var(--charge); }
+.weakness .stack-value { color: var(--weakness); }
+
+/* Bottom Panel - Abilities */
+.ability-row {
+    background: var(--ui-glass);
+    padding: 16px;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.ability-slot {
+    width: 70px;
+    height: 70px;
+    background: #1e293b;
+    border: 2px solid #475569;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.1s, border-color 0.1s;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.ability-slot.active {
+    transform: scale(0.95);
+    border-color: var(--primary);
+}
+
+.ability-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    opacity: 0.9;
+    z-index: 1;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s, filter 0.15s;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.1));
+}
+
+.ability-slot.active .ability-icon {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+}
+
+.ability-key {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #f1f5f9;
+    z-index: 2;
+    position: relative;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+}
+
+.ability-name {
+    font-size: 0.65rem;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 2px;
+    z-index: 2;
+    position: relative;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+}
+
+.ability-cd-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: rgba(0, 0, 0, 0.7);
+    transition: height 0.1s linear;
+    z-index: 3;
+}
+
+/* Feedback Texts & Effects */
+#feedback-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.feedback-text {
+    position: absolute;
+    font-weight: 900;
+    font-size: 2rem;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    animation: floatUpFade 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    transform: translate(-50%, -50%);
+}
+
+.feedback-success { color: #34d399; }
+.feedback-fail { color: #94a3b8; }
+.feedback-boom { color: #f87171; font-size: 3rem; }
+.feedback-warn { color: #fbbf24; font-size: 1.5rem; }
+
+@keyframes floatUpFade {
+    0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    30% { transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -100%) scale(1); }
+}
+
+/* Screen Shake Effect */
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.shake-active {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Explosion Effect */
+#explosion-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 18;
+}
+
+.explosion-burst {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #fbbf24 0%, #ef4444 40%, rgba(0,0,0,0) 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 1;
+    animation: blastOut 0.5s ease-out forwards;
+    filter: blur(2px) drop-shadow(0 0 20px #fbbf24);
+}
+
+@keyframes blastOut {
+    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+    50% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
+
+/* Joystick Controls */
+#joystick-area {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 160px;
+    height: 160px;
+    z-index: 50;
+    touch-action: none;
+    pointer-events: auto; /* Fix for joystick not working */
+}
+
+#joystick-container {
+    width: 140px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#joystick-knob {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transition: background 0.1s;
+}
+
+/* Flying Bullet Effect */
+.flying-bullet {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    transform-origin: center;
+    z-index: 15;
+    pointer-events: none;
+    animation: flyBulletOut 0.8s ease-out forwards;
+}
+
+@keyframes flyBulletOut {
+    0% { transform: translate(-50%, -50%) scale(1.2) rotate(45deg); opacity: 1; filter: drop-shadow(0 0 15px #fbbf24); }
+    100% { transform: translate(500px, -500px) scale(0.8) rotate(45deg); opacity: 0; }
+}
+
+/* Enemy System */
+#enemies-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 8;
+}
+
+.enemy-entity {
+    width: 45px;
+    height: 45px;
+    background-color: #ef4444; /* 빨간색 박스 */
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+    border: 3px solid #b91c1c;
+    border-radius: 6px;
+    z-index: 9;
+}
+
+@media (max-width: 768px) {
+    .ui-panel { padding: 10px; gap: 10px; }
+    .stat-row { padding: 8px 16px; flex-direction: column; gap: 5px; }
+    .health-bar-container { width: 150px; }
+    .stacks-container { flex-direction: column; gap: 5px; }
+    .ability-row { padding: 10px; gap: 10px; }
+    .ability-slot { width: 60px; height: 60px; border-radius: 12px; }
+    .ability-key { font-size: 1.2rem; }
+    #joystick-area { width: 120px; height: 120px; bottom: 10px; left: 10px; }
+    #joystick-container { width: 100px; height: 100px; }
+    #joystick-knob { width: 45px; height: 45px; }
+}
